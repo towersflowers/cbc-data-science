@@ -1,7 +1,7 @@
 # cbc-data-science
 Data Science Tools for CBC
 
-1- Script para Refrescar Bases de Datos del Area Ventas B-Sale en R
+1- Refrescar Maestras R: Script para Refrescar Bases de Datos del Area Ventas B-Sale en R
         
     Input:  - BBDD Ventas 
                 - BBDD Clientes Distribución
