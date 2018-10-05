@@ -34,7 +34,6 @@ base_SKU <- base_productos %>% group_by(sku.numero) %>% summarise()
 
 # Calculo SKU que tengan costo Cero
 base_Costo_zero <- base_Ventas_BV %>% filter(Costo.Neto.Unitario == "0")
-#ase_Costo_zero <- base_Costo_zero[!duplicated(base_Costo_zero$sku),]
 base_Costo_zero <- base_Costo_zero %>% filter(Tipo.de.Producto.o.Servicio != "Sin Tipo")
 
 # Saco los puntos a los Rut de CLientes en el paño de Ventas (importante poner \\)
@@ -61,8 +60,6 @@ for(i in 1:length(base_Clientes_BV_dist$Rut.Cliente)){
     }
 }
 
-#clientes_por_revisar <- clientes_por_revisar[-c(1:1),] # ELimino la primera fila que puse al crear el Data Frame
-
 # Reviso y comparo Sku productos
 sku_por_revisar <- data.frame(c(0))
 colnames(sku_por_revisar) <- "Sku No Encontrados"
@@ -75,12 +72,6 @@ for(i in 1:length(base_SKU_BV$SKU)){
     sku_por_revisar <- rbind(sku_por_revisar, c(toString(base_SKU_BV[i,1])))
   }
 }
-#sku_por_revisar <- sku_por_revisar[-c(1:1),] # ELimino la primera fila que puse al crear el Data Frame
-
-# Escribo CSV con los Clientes no Encontrados & los Sku no encontrados
-#write.csv2(clientes_por_revisar, file = paste("Clientes No Encontrados Dist",timestamp,".csv"), row.names=FALSE)
-#write.csv2(sku_por_revisar, file = paste("Sku No encontrados",timestamp,".csv"), row.names=FALSE) 
-
 # Rescato del Paño de Venta los clientes no encontrados
 clientes_por_revisar2 <- data.frame(base_Ventas_BV[1,])
 base_Ventas_BV$Rut.Cliente <- gsub('\\.', '', base_Ventas_BV$Rut.Cliente)
@@ -100,7 +91,6 @@ sku_por_revisar2 <- sku_por_revisar2[!duplicated(sku_por_revisar2$sku),] # Elimi
 #write.csv2(base_Costo_zero, file = paste("Sku Costeados en Zero",timestamp,".csv"), row.names = FALSE)
 
 # Imprimir Indicadores
-
 print(paste("Estan registrados el",a/length(base_Clientes_BV_dist$Rut.Cliente)*100,"% de los Clientes, Y Estan Documentados el ",b/length(base_SKU_BV$SKU)*100,"% de los Sku."))
 
 # Datos A Google Drive
@@ -109,11 +99,10 @@ sku_por_revisar2 <- sku_por_revisar2 %>% filter(sku_por_revisar2$Tipo.de.Product
 base_Costo_zero$date <- as.Date(base_Costo_zero$date, "%Y-%m-%d")
 base_Costo_zero <- base_Costo_zero %>% select(one_of(c("date","Sucursal","sku"))) %>% filter(base_Costo_zero$date >= "2018-05-1")
 
-# Interaccon con Google Drive
+# Interaccion con Google Drive
 gs_auth(new_user = TRUE) #4/bwADCt93GXw6zDdtNsdQpFvRva2_79HwMbPgj54gi_hKNSE3xoRgSNw
-#drive <- gs_ls()
 for_gs <- gs_key("1skTjmyKBoWSOl_MUtMFPknnG6pIDUF_tVzFrncQYWR0")
-
+# Ingreso las Tablas al Google Drive (El spreadsheet no puede esta abierto y debe ser borrado previamente, manteniendo nombre de las hojas)
 gs_edit_cells(for_gs, ws = "Lista de clientes no Encontrados", anchor = "A1", input = clientes_por_revisar2, byrow = TRUE)
 gs_edit_cells(for_gs, ws = "Lista de Sku no Encontrados", anchor = "A1", input = sku_por_revisar2, byrow = TRUE)
 gs_edit_cells(for_gs, ws = "Lista de Sku no Costeados", anchor = "A1", input = base_Costo_zero, byrow = TRUE) 
