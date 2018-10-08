@@ -18,8 +18,20 @@ library("googlesheets")
 gs_auth(new_user = TRUE) #4/bgBWtNMwzDiGMb0YnQpAZ0QQXgHVzkwmn70ICDjI18oEan6kd8zpJ1c
 
 # Leo las Bases de Datos y las guardo en las matrices correspondientes (Los csv deben estar separados por ";")
-base_Clientes_dist <- read.csv2("BBDD/Maestra Clientes Dist.csv", header = TRUE, sep = ";")
-base_productos <- read.csv2("BBDD/BBDD sku.csv",header = TRUE, sep = ";")
+
+#base_Clientes_dist <- read.csv2("BBDD/Maestra Clientes Dist.csv", header = TRUE, sep = ";")
+gs_ls() # list spreradsheets
+titledist <- gs_title("Maestra Clientes Dist.") #elect spreadsheet
+gs_ws_ls(titledist) #list worksheet
+distribucion <- gs_read(ss = titledist, ws = "Hoja1") #bajamos maestra
+base_Clientes_dist <- as.data.frame(distribucion)
+
+#base_productos <- read.csv2("BBDD/BBDD sku.csv",header = TRUE, sep = ";")
+titlesku <- gs_title("BBDD sku")
+gs_ws_ls(titlesku)
+sku <- gs_read(ss = titlesku, ws = "sku")
+base_productos <- as.data.frame(sku)
+
 base_Ventas_BV <-read.csv2("BBDD/2015-2018m9.csv", header = TRUE, sep = ";")
 
 # Extraigo los clientes de Dist.
